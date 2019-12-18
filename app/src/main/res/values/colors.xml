@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#3F51B5</color>
+    <color name="colorAccent">#FF0033</color>
+    <color name="systemAppAccent">#FF0033</color>
+    <color name="systemAppAccentCantLaunch">#FF0033</color>
+    <color name="userAppAccent">#FFFFFF</color>
+    <color name="userAppAccentCantLaunch">#FFFFFF</color>
+</resources>

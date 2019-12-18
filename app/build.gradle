@@ -1,0 +1,46 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion = "29.0.2"
+
+    signingConfigs {
+        debug {
+            storeFile file("debug.keystore")
+        }
+    }
+    defaultConfig {
+        signingConfig signingConfigs.debug
+        applicationId "cn.asiontang.app.quick_open_file"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 1
+        versionName "191218.01.01.001"
+        //
+        //resValue "string", "app_name_alias", "YeLauncher"
+        buildConfigField "boolean", "isEnableRunAndExit", "false"
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-rules-release.pro'
+        }
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix ".debug"
+            signingConfig signingConfigs.debug
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-rules-debug.pro'
+        }
+    }
+    //使用3.0.0及以上版本必须定义一个口味维度，否则会导致编辑报错
+    flavorDimensions "default"
+    productFlavors {
+        normal {
+        }
+    }
+}
+
+dependencies {
+    api fileTree(include: ['*.jar'], dir: 'libs')
+}
