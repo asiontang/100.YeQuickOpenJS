@@ -279,16 +279,26 @@ public class MainActivity extends Activity
 
                                     mUserSelectedFolderUriList.remove(uri);
 
-                                    Uri mUserSelectedFolderUri = mUserSelectedFolderUriList.get(Math.min(index, mUserSelectedFolderUriList.size() - 1));
-                                    refreshUserSelectedFolderItemList(mUserSelectedFolderUri);
-                                    loadFiles(mUserSelectedFolderUri);
+                                    int minIndex = Math.min(index, mUserSelectedFolderUriList.size() - 1);
+                                    if (minIndex == -1)
+                                    {
+                                        if (mLayoutFolderItems.getChildCount() > 2)
+                                            mLayoutFolderItems.removeViews(2, mLayoutFolderItems.getChildCount() - 2);
+
+                                        mFileList.clear();
+                                        mAdapter.refresh();
+                                    }
+                                    else
+                                    {
+                                        Uri mUserSelectedFolderUri = mUserSelectedFolderUriList.get(minIndex);
+                                        refreshUserSelectedFolderItemList(mUserSelectedFolderUri);
+                                        loadFiles(mUserSelectedFolderUri);
+                                    }
 
                                     String[] uriSet = getDefaultSharedPreferences().getString(KEY_STR_SELECTED_FOLDER_URI_LIST, "").split("\f");
-                                    {
-                                        List<String> list = new ArrayList<>(Arrays.asList(uriSet));
-                                        list.remove(uri.toString());
-                                        getDefaultSharedPreferences().edit().putString(KEY_STR_SELECTED_FOLDER_URI_LIST, TextUtils.join("\f", list.toArray(new String[0]))).apply();
-                                    }
+                                    List<String> list = new ArrayList<>(Arrays.asList(uriSet));
+                                    list.remove(uri.toString());
+                                    getDefaultSharedPreferences().edit().putString(KEY_STR_SELECTED_FOLDER_URI_LIST, TextUtils.join("\f", list.toArray(new String[0]))).apply();
 
                                     Toast.makeText(MainActivity.this, child.getText() + " 删除成功", Toast.LENGTH_SHORT).show();
                                 }
