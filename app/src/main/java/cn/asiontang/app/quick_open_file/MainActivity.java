@@ -215,14 +215,15 @@ public class MainActivity extends Activity
         SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
         String[] uriSet = defaultSharedPreferences.getString(KEY_STR_SELECTED_FOLDER_URI_LIST, "").split("\f");
         List<String> list = new ArrayList<>(Arrays.asList(uriSet));
-        list.add(data.getData().toString());
+        if (!list.contains(data.getData().toString()))
+            list.add(data.getData().toString());
         defaultSharedPreferences.edit().putString(KEY_STR_SELECTED_FOLDER_URI_LIST, TextUtils.join("\f", list.toArray(new String[0]))).apply();
 
         //加载当前目录的最新数据
         loadFiles(data.getData());
 
         //刷新目录列表
-        refreshUserSelectedFolderItemList();
+        refreshUserSelectedFolderItemList(data.getData());
     }
 
     @Override
@@ -235,15 +236,17 @@ public class MainActivity extends Activity
         initView();
 
         //刷新目录列表
-        refreshUserSelectedFolderItemList();
-
         if (mUserSelectedFolderUriList.isEmpty())
             startSelectFolder();
         else
-            loadFiles(mUserSelectedFolderUriList.get(Math.min(mUserSelectedFolderUriIndex, mUserSelectedFolderUriList.size() - 1)));
+        {
+            Uri mUserSelectedFolderUri = mUserSelectedFolderUriList.get(Math.min(mUserSelectedFolderUriIndex, mUserSelectedFolderUriList.size() - 1));
+            refreshUserSelectedFolderItemList(mUserSelectedFolderUri);
+            loadFiles(mUserSelectedFolderUri);
+        }
     }
 
-    private void refreshUserSelectedFolderItemList()
+    private void refreshUserSelectedFolderItemList(Uri mUserSelectedFolderUri)
     {
         //先移除旧的.
         if (mLayoutFolderItems.getChildCount() > 2)
@@ -257,7 +260,8 @@ public class MainActivity extends Activity
             final RadioButton child = (RadioButton) layoutInflater.inflate(R.layout.activity_main_folder_item, mLayoutFolderItems, false);
             child.setId(i);
             child.setTag(uri);
-            child.setText(uri.getLastPathSegment().substring(uri.getLastPathSegment().indexOf("/") + 1));
+            child.setChecked(uri.equals(mUserSelectedFolderUri));
+            child.setText(uri.getLastPathSegment().substring(uri.getLastPathSegment().indexOf("/") + 1).replace("primary:", ""));
             child.setOnLongClickListener(new View.OnLongClickListener()
             {
                 @Override
@@ -274,9 +278,10 @@ public class MainActivity extends Activity
                                     int index = mLayoutFolderItems.indexOfChild(child);
 
                                     mUserSelectedFolderUriList.remove(uri);
-                                    mLayoutFolderItems.removeView(child);
 
-                                    loadFiles(mUserSelectedFolderUriList.get(Math.min(index, mUserSelectedFolderUriList.size() - 1)));
+                                    Uri mUserSelectedFolderUri = mUserSelectedFolderUriList.get(Math.min(index, mUserSelectedFolderUriList.size() - 1));
+                                    refreshUserSelectedFolderItemList(mUserSelectedFolderUri);
+                                    loadFiles(mUserSelectedFolderUri);
 
                                     String[] uriSet = getDefaultSharedPreferences().getString(KEY_STR_SELECTED_FOLDER_URI_LIST, "").split("\f");
                                     {
