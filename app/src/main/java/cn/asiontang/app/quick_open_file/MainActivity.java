@@ -115,7 +115,7 @@ public class MainActivity extends Activity
     {
         try
         {
-            //TODO:getContentResolver().takePersistableUriPermission(mUserSelectedFolderUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            getContentResolver().takePersistableUriPermission(mUserSelectedFolderUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
             //DocumentsContract.ACTION_DOCUMENT_SETTINGS;
             DocumentFile pickedDir = DocumentFile.fromTreeUri(this, mUserSelectedFolderUri);
