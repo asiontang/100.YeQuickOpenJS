@@ -11,7 +11,7 @@ android {
     }
     defaultConfig {
         signingConfig signingConfigs.debug
-        applicationId "cn.asiontang.app.quick_open_file"
+        applicationId "cn.asiontang.app.quick_open_js"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 7

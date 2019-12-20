@@ -19,7 +19,7 @@ package eu.chainfire.libsuperuser;
 import android.os.Looper;
 import android.util.Log;
 
-import cn.asiontang.app.quick_open_file.BuildConfig;
+import cn.asiontang.app.quick_open_js.BuildConfig;
 
 /**
  * Utility class for logging and debug features that (by default) does nothing when not in debug

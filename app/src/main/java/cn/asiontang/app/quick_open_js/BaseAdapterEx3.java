@@ -1,4 +1,4 @@
-package cn.asiontang.app.quick_open_file;
+package cn.asiontang.app.quick_open_js;
 
 import android.content.Context;
 import android.util.SparseArray;
