@@ -44,18 +44,6 @@ public class MainActivity extends Activity
     private SharedPreferences mDefaultSharedPreferences;
     private RadioGroup mLayoutFolderItems;
 
-    private void excludeTheFile(final YeFile item)
-    {
-        getDefaultSharedPreferences().edit().putBoolean(item.mDocumentFile.getUri().toString(), true).apply();
-        if (mAdapter.getOriginaItems() == null)
-            return;
-
-        mAdapter.getOriginaItems().remove(item);
-        mAdapter.refresh();
-
-        Toast.makeText(this, item.Name + " 排除成功", Toast.LENGTH_SHORT).show();
-    }
-
     private SharedPreferences getDefaultSharedPreferences()
     {
         if (mDefaultSharedPreferences != null)
@@ -94,8 +82,27 @@ public class MainActivity extends Activity
             @Override
             public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id)
             {
-                excludeTheFile(mAdapter.getItem(position));
-                return false;
+                final YeFile item = mAdapter.getItem(position);
+                new AlertDialog.Builder(MainActivity.this)
+                        .setMessage("是否排除" + item.Name)
+                        .setNegativeButton(android.R.string.no, null)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(final DialogInterface dialog, final int which)
+                            {
+                                getDefaultSharedPreferences().edit().putBoolean(item.mDocumentFile.getUri().toString(), true).apply();
+                                if (mAdapter.getOriginaItems() == null)
+                                    return;
+
+                                mAdapter.getOriginaItems().remove(item);
+                                mAdapter.refresh();
+
+                                Toast.makeText(MainActivity.this, item.Name + " 排除成功", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .show();
+                return true;
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -304,7 +311,7 @@ public class MainActivity extends Activity
                                 }
                             })
                             .show();
-                    return false;
+                    return true;
                 }
             });
             mLayoutFolderItems.addView(child);

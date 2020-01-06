@@ -15,7 +15,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 7
-        versionName "191220.01.03.008"
+        versionName "200106.01.04.011"
         //
         //resValue "string", "app_name_alias", "YeLauncher"
         buildConfigField "boolean", "isEnableRunAndExit", "false"
@@ -29,7 +29,7 @@ android {
             applicationIdSuffix ".debug"
             versionNameSuffix ".debug"
             signingConfig signingConfigs.debug
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-rules-debug.pro'
         }
     }
