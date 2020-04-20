@@ -21,6 +21,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import androidx.documentfile.provider.DocumentFile;
@@ -200,6 +202,14 @@ public class MainActivity extends Activity
                     continue;
                 mFileList.add(new YeFile(file));
             }
+            Collections.sort(mFileList, new Comparator<YeFile>()
+            {
+                @Override
+                public int compare(final YeFile o1, final YeFile o2)
+                {
+                    return String.valueOf(o1.Name).compareTo(String.valueOf(o2.Name));
+                }
+            });
             mAdapter.refresh();
         }
         catch (Exception e)
