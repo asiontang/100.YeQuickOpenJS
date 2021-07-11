@@ -22,3 +22,4 @@ out/
 .idea/compiler.xml
 build_file_checksums.ser
 .idea/caches/*
+.idea/jarRepositories.xml

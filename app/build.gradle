@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion = "29.0.2"
+    compileSdkVersion 30
+    buildToolsVersion = "30.0.3"
 
     signingConfigs {
         debug {
@@ -13,7 +13,7 @@ android {
         signingConfig signingConfigs.debug
         applicationId "cn.asiontang.app.quick_open_js"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 12
         versionName "200420.01.05.012"
         //
