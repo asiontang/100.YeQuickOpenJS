@@ -330,7 +330,14 @@ public class MainActivity extends Activity
 
     private void startSelectFolder()
     {
-        startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), 0);
+        try
+        {
+            startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE), 0);
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     public class YeFile
