@@ -3,6 +3,7 @@ package cn.asiontang.app.quick_open_js;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -36,24 +37,24 @@ import eu.chainfire.libsuperuser.Shell;
 @SuppressLint({"StaticFieldLeak", "DefaultLocale"})
 public class MainActivity extends Activity
 {
-    private static final String KEY_INT_SELECTED_FOLDER_INDEX = "UserSelectedFolderUriIndex";
-    private static final String KEY_STR_SELECTED_FOLDER_URI_LIST = "UserSelectedFolderUriList";
-    private static final String TAG = "-------";
-    private final List<YeFile> mFileList = new ArrayList<>();
-    private final List<Uri> mUserSelectedFolderUriList = new ArrayList<>();
-    private BaseAdapterEx3<YeFile> mAdapter;
-    private int mUserSelectedFolderUriIndex = 0;
-    private SharedPreferences mDefaultSharedPreferences;
-    private RadioGroup mLayoutFolderItems;
+    protected static final String KEY_INT_SELECTED_FOLDER_INDEX = "UserSelectedFolderUriIndex";
+    protected static final String KEY_STR_SELECTED_FOLDER_URI_LIST = "UserSelectedFolderUriList";
+    protected static final String TAG = "-------";
+    protected final List<YeFile> mFileList = new ArrayList<>();
+    protected final List<Uri> mUserSelectedFolderUriList = new ArrayList<>();
+    protected BaseAdapterEx3<YeFile> mAdapter;
+    protected int mUserSelectedFolderUriIndex = 0;
+    protected SharedPreferences mDefaultSharedPreferences;
+    protected RadioGroup mLayoutFolderItems;
 
-    private SharedPreferences getDefaultSharedPreferences()
+    protected SharedPreferences getDefaultSharedPreferences()
     {
         if (mDefaultSharedPreferences != null)
             return mDefaultSharedPreferences;
         return mDefaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
-    private void initData()
+    protected void initData()
     {
         SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
 
@@ -66,7 +67,7 @@ public class MainActivity extends Activity
                     mUserSelectedFolderUriList.add(Uri.parse(s));
     }
 
-    private void initView()
+    protected void initView()
     {
         setContentView(R.layout.activity_main);
 
@@ -114,20 +115,7 @@ public class MainActivity extends Activity
             {
                 //√成功的尝试4: 通过Root直接调用RunIntentActivity来绕开 android:exported=False 检测,直接启动脚本.
                 final YeFile item = mAdapter.getItem(position);
-                new Thread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        //必须使用Root(SU)启动AM,否则会报错:ActivityManager: Permission Denial: startActivity asks to run as user -2 but is calling from user 0; this requires android.permission.INTERACT_ACROSS_USERS_FULL
-
-                        //方法1:
-                        //Shell.SU.run(String.format("am start -n org.autojs.autojspro/org.autojs.autojs.external.open.RunIntentActivity --es path \"%s\"", UriUtils.getProviderOriginalFilePath(getApplicationContext(), item.mDocumentFile.getUri())));
-
-                        //方法2:
-                        Shell.SU.run(String.format("am start -n org.autojs.autojspro/org.autojs.autojs.external.open.RunIntentActivity -d \"%s\"", UriUtils.getProviderOriginalFilePath(getApplicationContext(), item.mDocumentFile.getUri())));
-                    }
-                }).start();
+                startAutoJsByUri(getApplication(), item.mDocumentFile.getUri());
 
                 //×失败的尝试3:提示 android:exported=False 无法跨APP调用
                 //Intent intent = new Intent();
@@ -180,9 +168,26 @@ public class MainActivity extends Activity
     }
 
     /**
+     * √成功的尝试4: 通过Root直接调用RunIntentActivity来绕开 android:exported=False 检测,直接启动脚本.
+     */
+    public static void startAutoJsByUri(final Application mContext, final Uri uri)
+    {
+        new Thread(() ->
+        {
+            //必须使用Root(SU)启动AM,否则会报错:ActivityManager: Permission Denial: startActivity asks to run as user -2 but is calling from user 0; this requires android.permission.INTERACT_ACROSS_USERS_FULL
+
+            //方法1:
+            //Shell.SU.run(String.format("am start -n org.autojs.autojspro/org.autojs.autojs.external.open.RunIntentActivity --es path \"%s\"", UriUtils.getProviderOriginalFilePath(getApplicationContext(), item.mDocumentFile.getUri())));
+
+            //方法2:
+            Shell.SU.run(String.format("am start -n org.autojs.autojspro/org.autojs.autojs.external.open.RunIntentActivity -d \"%s\"", UriUtils.getProviderOriginalFilePath(mContext, uri)));
+        }).start();
+    }
+
+    /**
      * <li><a href="https://stackoverflow.com/questions/26744842/how-to-use-the-new-sd-card-access-api-presented-for-android-5-0-lollipop">How to use the new SD card access API presented for Android 5.0 (Lollipop)? - Stack Overflow</a></li>
      */
-    private void loadFiles(Uri mUserSelectedFolderUri)
+    protected void loadFiles(Uri mUserSelectedFolderUri)
     {
         try
         {
@@ -263,7 +268,7 @@ public class MainActivity extends Activity
         }
     }
 
-    private void refreshUserSelectedFolderItemList(Uri mUserSelectedFolderUri)
+    protected void refreshUserSelectedFolderItemList(Uri mUserSelectedFolderUri)
     {
         //先移除旧的.
         if (mLayoutFolderItems.getChildCount() > 2)
@@ -328,7 +333,7 @@ public class MainActivity extends Activity
         }
     }
 
-    private void startSelectFolder()
+    protected void startSelectFolder()
     {
         try
         {
@@ -340,7 +345,7 @@ public class MainActivity extends Activity
         }
     }
 
-    public class YeFile
+    public static class YeFile
     {
         public final DocumentFile mDocumentFile;
         public CharSequence Name;
