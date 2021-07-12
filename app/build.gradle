@@ -14,8 +14,8 @@ android {
         applicationId "cn.asiontang.app.quick_open_js"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 18
-        versionName "210712.02.02.018"
+        versionCode 19
+        versionName "210712.02.03.019"
         //
         //resValue "string", "app_name_alias", "YeLauncher"
         buildConfigField "boolean", "isEnableRunAndExit", "false"

@@ -2,6 +2,7 @@ package cn.asiontang.app.quick_open_js;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ListView;
@@ -36,10 +37,10 @@ public class AppWidgetConfigActivity extends MainActivity
 
             int mAppWidgetId = getIntent().getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
-            //NO_NEED:getDefaultSharedPreferences().edit()
-            //NO_NEED:        .putString(mAppWidgetId + ".NAME", String.valueOf(item.Name))
-            //NO_NEED:        .putString(mAppWidgetId + ".URI", item.mDocumentFile.getUri().toString())
-            //NO_NEED:        .apply();
+            getDefaultSharedPreferences().edit()
+                    .putString(mAppWidgetId + ".NAME", String.valueOf(item.Name))
+                    .putString(mAppWidgetId + ".URI", item.mDocumentFile.getUri().toString())
+                    .apply();
 
             RemoteViews views = new RemoteViews(getPackageName(), R.layout.appwidget);
 
@@ -56,7 +57,9 @@ public class AppWidgetConfigActivity extends MainActivity
      * [一个android应用向Home screen添加多个Widget_qjbagu的专栏-CSDN博客](https://blog.csdn.net/qjbagu/article/details/6694346)
      *
      * @param mAppWidgetId 如果在生成PendingIntent时，第二个参数相同，那么就相当于在原来的PendingIntent上修改，我们看到的当然是最后一次修改的结果。
+     * @see AppWidgetProvider#getOnClickPendingIntent(Context, int, String)
      */
+    @SuppressWarnings("JavadocReference")
     private PendingIntent getOnClickPendingIntent(final int mAppWidgetId, final YeFile item)
     {
         final Intent dataIntent = new Intent(this, AppWidgetService.class);
