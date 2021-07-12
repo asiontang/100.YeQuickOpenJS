@@ -44,7 +44,7 @@ public class AppWidgetConfigActivity extends MainActivity
             RemoteViews views = new RemoteViews(getPackageName(), R.layout.appwidget);
 
             views.setTextViewText(android.R.id.title, item.Name);
-            views.setOnClickPendingIntent(android.R.id.widget_frame, getOnClickPendingIntent(item));
+            views.setOnClickPendingIntent(android.R.id.widget_frame, getOnClickPendingIntent(mAppWidgetId, item));
 
             AppWidgetManager.getInstance(this).updateAppWidget(mAppWidgetId, views);
 
@@ -52,11 +52,16 @@ public class AppWidgetConfigActivity extends MainActivity
         });
     }
 
-    private PendingIntent getOnClickPendingIntent(final YeFile item)
+    /**
+     * [一个android应用向Home screen添加多个Widget_qjbagu的专栏-CSDN博客](https://blog.csdn.net/qjbagu/article/details/6694346)
+     *
+     * @param mAppWidgetId 如果在生成PendingIntent时，第二个参数相同，那么就相当于在原来的PendingIntent上修改，我们看到的当然是最后一次修改的结果。
+     */
+    private PendingIntent getOnClickPendingIntent(final int mAppWidgetId, final YeFile item)
     {
         final Intent dataIntent = new Intent(this, AppWidgetService.class);
         dataIntent.putExtra(AppWidgetService.EXTRA_KEY_URI, item.mDocumentFile.getUri());
-        return PendingIntent.getService(this, 0, dataIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getService(this, mAppWidgetId, dataIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private void onSaveClick()
