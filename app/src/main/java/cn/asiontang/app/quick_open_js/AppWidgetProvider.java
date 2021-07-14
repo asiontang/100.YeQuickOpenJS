@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 /**
  * 1. [构建应用微件  |  Android 开发者  |  Android Developers](https://developer.android.google.cn/guide/topics/appwidgets?hl=zh-cn)
@@ -40,13 +41,21 @@ public class AppWidgetProvider extends android.appwidget.AppWidgetProvider
     @Override
     public void onDeleted(final Context context, final int[] appWidgetIds)
     {
-        SharedPreferences.Editor edit = getDefaultSharedPreferences(context).edit();
-        for (int appWidgetId : appWidgetIds)
+        try
         {
-            edit.remove(appWidgetId + ".NAME");
-            edit.remove(appWidgetId + ".URI");
+            SharedPreferences.Editor edit = getDefaultSharedPreferences(context).edit();
+            for (int appWidgetId : appWidgetIds)
+            {
+                edit.remove(appWidgetId + ".NAME");
+                edit.remove(appWidgetId + ".URI");
+            }
+            edit.apply();
         }
-        edit.apply();
+        catch (Exception e)
+        {
+            Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -54,15 +63,26 @@ public class AppWidgetProvider extends android.appwidget.AppWidgetProvider
     {
         for (int mAppWidgetId : appWidgetIds)
         {
-            final String name = getDefaultSharedPreferences(context).getString(mAppWidgetId + ".NAME", null);
-            final String uri = getDefaultSharedPreferences(context).getString(mAppWidgetId + ".URI", null);
+            try
+            {
+                final String uri = getDefaultSharedPreferences(context).getString(mAppWidgetId + ".URI", null);
+                if (uri == null || uri.trim().length() == 0)
+                    continue;
 
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.appwidget);
+                final String name = getDefaultSharedPreferences(context).getString(mAppWidgetId + ".NAME", null);
 
-            views.setTextViewText(android.R.id.title, name);
-            views.setOnClickPendingIntent(android.R.id.widget_frame, getOnClickPendingIntent(context, mAppWidgetId, uri));
+                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.appwidget);
 
-            appWidgetManager.updateAppWidget(mAppWidgetId, views);
+                views.setTextViewText(android.R.id.title, name);
+                views.setOnClickPendingIntent(android.R.id.widget_frame, getOnClickPendingIntent(context, mAppWidgetId, uri));
+
+                appWidgetManager.updateAppWidget(mAppWidgetId, views);
+            }
+            catch (Exception e)
+            {
+                Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+                e.printStackTrace();
+            }
         }
     }
 }
