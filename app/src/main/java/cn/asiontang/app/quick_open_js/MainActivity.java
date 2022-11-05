@@ -47,6 +47,23 @@ public class MainActivity extends Activity
     protected SharedPreferences mDefaultSharedPreferences;
     protected RadioGroup mLayoutFolderItems;
 
+    /**
+     * √成功的尝试4: 通过Root直接调用RunIntentActivity来绕开 android:exported=False 检测,直接启动脚本.
+     */
+    public static void startAutoJsByUri(final Application mContext, final Uri uri)
+    {
+        new Thread(() ->
+        {
+            //必须使用Root(SU)启动AM,否则会报错:ActivityManager: Permission Denial: startActivity asks to run as user -2 but is calling from user 0; this requires android.permission.INTERACT_ACROSS_USERS_FULL
+
+            //方法1:
+            //Shell.SU.run(String.format("am start -n org.autojs.autojspro/org.autojs.autojs.external.open.RunIntentActivity --es path \"%s\"", UriUtils.getProviderOriginalFilePath(getApplicationContext(), item.mDocumentFile.getUri())));
+
+            //方法2:
+            Shell.SU.run(String.format("am start -n org.autojs.autojspro/org.autojs.autojs.external.open.RunIntentActivity -d \"%s\"", UriUtils.getProviderOriginalFilePath(mContext, uri)));
+        }).start();
+    }
+
     protected SharedPreferences getDefaultSharedPreferences()
     {
         if (mDefaultSharedPreferences != null)
@@ -166,20 +183,11 @@ public class MainActivity extends Activity
     }
 
     /**
-     * √成功的尝试4: 通过Root直接调用RunIntentActivity来绕开 android:exported=False 检测,直接启动脚本.
+     * 过滤掉手动排除过的文件
      */
-    public static void startAutoJsByUri(final Application mContext, final Uri uri)
+    protected boolean isTheFileExcluded(final DocumentFile file)
     {
-        new Thread(() ->
-        {
-            //必须使用Root(SU)启动AM,否则会报错:ActivityManager: Permission Denial: startActivity asks to run as user -2 but is calling from user 0; this requires android.permission.INTERACT_ACROSS_USERS_FULL
-
-            //方法1:
-            //Shell.SU.run(String.format("am start -n org.autojs.autojspro/org.autojs.autojs.external.open.RunIntentActivity --es path \"%s\"", UriUtils.getProviderOriginalFilePath(getApplicationContext(), item.mDocumentFile.getUri())));
-
-            //方法2:
-            Shell.SU.run(String.format("am start -n org.autojs.autojspro/org.autojs.autojs.external.open.RunIntentActivity -d \"%s\"", UriUtils.getProviderOriginalFilePath(mContext, uri)));
-        }).start();
+        return getDefaultSharedPreferences().getBoolean(file.getUri().toString(), false);
     }
 
     /**
@@ -220,14 +228,6 @@ public class MainActivity extends Activity
             Log.e(TAG, e.toString());
             e.printStackTrace();
         }
-    }
-
-    /**
-     * 过滤掉手动排除过的文件
-     */
-    protected boolean isTheFileExcluded(final DocumentFile file)
-    {
-        return getDefaultSharedPreferences().getBoolean(file.getUri().toString(), false);
     }
 
     @Override
