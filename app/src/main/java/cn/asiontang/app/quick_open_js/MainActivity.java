@@ -56,11 +56,9 @@ public class MainActivity extends Activity
 
     protected void initData()
     {
-        SharedPreferences defaultSharedPreferences = getDefaultSharedPreferences();
+        mUserSelectedFolderUriIndex = getDefaultSharedPreferences().getInt(KEY_INT_SELECTED_FOLDER_INDEX, 0);
 
-        mUserSelectedFolderUriIndex = defaultSharedPreferences.getInt(KEY_INT_SELECTED_FOLDER_INDEX, 0);
-
-        final String[] uriStr = defaultSharedPreferences.getString(KEY_STR_SELECTED_FOLDER_URI_LIST, "").split("\f");
+        final String[] uriStr = getDefaultSharedPreferences().getString(KEY_STR_SELECTED_FOLDER_URI_LIST, "").split("\f");
         if (uriStr.length > 0)
             for (String s : uriStr)
                 if (!TextUtils.isEmpty(s))
@@ -203,7 +201,7 @@ public class MainActivity extends Activity
                 if (!file.isFile())
                     continue;
                 //过滤掉手动排除过的文件
-                if (getDefaultSharedPreferences().getBoolean(file.getUri().toString(), false))
+                if (isTheFileExcluded(file))
                     continue;
                 mFileList.add(new YeFile(file));
             }
@@ -222,6 +220,14 @@ public class MainActivity extends Activity
             Log.e(TAG, e.toString());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 过滤掉手动排除过的文件
+     */
+    protected boolean isTheFileExcluded(final DocumentFile file)
+    {
+        return getDefaultSharedPreferences().getBoolean(file.getUri().toString(), false);
     }
 
     @Override

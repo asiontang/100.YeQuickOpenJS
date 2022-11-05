@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.RemoteViews;
 
+import androidx.documentfile.provider.DocumentFile;
+
 /**
  * 1. [构建应用微件  |  Android 开发者  |  Android Developers](https://developer.android.google.cn/guide/topics/appwidgets?hl=zh-cn)
  */
@@ -23,6 +25,14 @@ public class AppWidgetConfigActivity extends MainActivity
         // 应用微件托管应用就会收到配置已取消的通知，因此不会添加应用微件。
         //https://developer.android.google.cn/guide/topics/appwidgets?hl=zh-cn
         setResult(RESULT_CANCELED, getIntent());
+    }
+
+    @Override
+    protected boolean isTheFileExcluded(final DocumentFile file)
+    {
+        //可能希望桌面小组件能直接选中被排除的某些常用功能.例如一键停止脚本.
+        //NO:return super.isTheFileExcluded(file);
+        return false;
     }
 
     @Override
